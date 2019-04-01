@@ -49,3 +49,5 @@ function my_custom_js() {
   });
   </script>';
 }
+
+add_action( 'wp_head', 'my_custom_js' );

@@ -35,6 +35,6 @@ function shifter_wp_dashboard_redirect() {
   }
 }
 
-if ( SERVICE_TYPE === 'generator' ) {
+// if ( SERVICE_TYPE === 'generator' ) {
   shifter_wp_dashboard_redirect();
-}
+// }

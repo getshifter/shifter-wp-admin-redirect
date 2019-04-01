@@ -10,21 +10,29 @@ License: GPL2
 */
 
 /*
- * JS Scripts
- * Admin and Front-End
- * Load after enqueue jQuery
+ * Shifter WP API
+ * Check if Shifter WordPress Plugin API Plugin Exists
  */
 
-add_action('wp_enqueue_scripts', 'shifter_wp_admin_redirect_js' );
 
-function shifter_wp_admin_redirect_js() {
+if (!class_exists('Shifter_API')) {
+  return;
+}
 
-  $js = plugins_url( 'main/main.js', __FILE__ );
+// define('SERVICE_TYPE', env('SERVICE_TYPE') ?: 'false');
 
-  wp_register_script('shifter-wp-admin-redirect-js', $js, array( 'jquery' ));
-  wp_localize_script('shifter-wp-admin-redirect-js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+function wp_login_page() {
+  $ABSPATH = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, ABSPATH);
+  return ((in_array($ABSPATH.'wp-login.php', get_included_files()) || in_array($ABSPATH.'wp-register.php', get_included_files()) ) || (isset($_GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php') || $_SERVER['PHP_SELF']== '/wp-login.php');
+}
 
-  if (is_user_logged_in()) {
-    wp_enqueue_script('shifter-wp-admin-redirect-js');;
+function shifter_wp_dashboard_redirect() {
+  include( ABSPATH . 'wp-includes/pluggable.php'); 
+  include( ABSPATH . 'wp-load.php');
+  $api = new Shifter_API;
+  if ( wp_login_page() ) {
+    wp_redirect( $api->shifter_dashboard_url, 301 ); exit;
   }
 }
+
+shifter_wp_dashboard_redirect();
